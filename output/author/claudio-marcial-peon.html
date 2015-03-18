@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <meta charset="utf-8" />
+        <title>La Jungla de Bambú - Claudio Marcial Peón</title>
+        <link rel="stylesheet" href="http://www.elpanda.com.ar/theme/css/main.css" />
+
+        <!--[if IE]>
+            <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+</head>
+<!-- Piwik -->
+<script type="text/javascript">
+  var _paq = _paq || [];
+  _paq.push(["setDocumentTitle", document.domain + "/" + document.title]);
+  _paq.push(["setCookieDomain", "*.www.elpanda.com.ar"]);
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u="//stats.datacor.com.ar/";
+    _paq.push(['setTrackerUrl', u+'piwik.php']);
+    _paq.push(['setSiteId', 2]);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+  })();
+</script>
+<noscript><p><img src="//stats.datacor.com.ar/piwik.php?idsite=2" style="border:0;" alt="" /></p></noscript>
+<!-- End Piwik Code -->
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <img style="border: 0px solid ; width: 125px; height: 126px;" alt="" src="/theme/images/panda.png">&nbsp;&nbsp;<br><h1><a href="http://www.elpanda.com.ar/">La Jungla de Bambú </a></h1>
+                <nav><ul>
+    
+                        <li><a href="http://www.elpanda.com.ar/pages/about-me.html">About Me</a></li>
+                    <li><a href="http://www.elpanda.com.ar/category/coding.html">Coding</a></li>
+                    <li><a href="http://www.elpanda.com.ar/category/linux.html">Linux</a></li>
+                </ul>
+                </nav>
+        </header><!-- /#banner -->
+
+            <aside id="featured" class="body">
+                <article>
+                    <h1 class="entry-title"><a href="http://www.elpanda.com.ar/2015/installing-libertya-erp-on-a-digital-ocean-debian-vm.html">Installing Libertya ERP on a Digital Ocean Debian VM</a></h1>
+<footer class="post-info">
+        <span>Tue 20 January 2015</span>
+<span>| tags: <a href="http://www.elpanda.com.ar/tag/linux.html">Linux</a><a href="http://www.elpanda.com.ar/tag/erp.html">ERP</a><a href="http://www.elpanda.com.ar/tag/libertya.html">Libertya</a><a href="http://www.elpanda.com.ar/tag/digitalocean.html">DigitalOcean</a><a href="http://www.elpanda.com.ar/tag/debian.html">Debian</a></span>
+</footer><!-- /.post-info --><p>Recently I got a request to install a test server with Libertya ERP on it so new employees can touch, break and learn. 
+The production server was kind of full to host another VM for this purpose, so I decided to use a Digital Ocean dropplet to host the application. 
+First, Libertya is an ERP quite popular here in Argentina because of its integration with our Tax Agency. Its installation is not very straight forward, it depends on Java 6, and thats makes the installation on newer systems very messy.</p>
+<p>Let's start by creating a Debian Dropplet in Digital Ocean. </p>
+<p><img alt="Digital Ocean" src="/images/digitaloceandropplet.png" /></p>
+<p>I chose the smallest dropplet, as it was only for test purposes. For this server, I selected a Debian 7.0 x64 image.</p>
+<p><img alt="Digital Ocean" src="/images/digitaloceanos.png" /></p>
+<p>Once the dropplet is created, you will get your logging credentials on your email. </p>
+<p>After logging sucessfully to the VM, you need to get 4 things: </p>
+<ul>
+<li>Postgresql 8.4.</li>
+<li>JDK 6.</li>
+<li>ServidorOXP (Libertya Server).</li>
+<li>DB Dump.</li>
+</ul>
+<h2>PostgreSQL 8.4</h2>
+<p>Debian 7 comes with PostgreSQL 9.4, this version has some issues with Libertya, so we need to manually install version 8.4 of the DB. For that, we go to <a href="http://www.postgresql.org/download/linux/debian/">PostgreSQL Debian Download Website</a> and choose from PostgreSQL Apt Repository Wheezy (7.x). It will give us some lines to add to our APT sources. 
+So we execute the following commands on our VM:</p>
+<div class="highlight"><pre><span class="go">nano /etc/apt/sources.list.d/pgdg.list</span>
+</pre></div>
+
+
+<p>And we introduce the following line:</p>
+<div class="highlight"><pre><span class="go">deb http://apt.postgresql.org/pub/repos/apt/ wheezy-pgdg main</span>
+</pre></div>
+
+
+<p>We import the repository key, and then do an update. </p>
+<div class="highlight"><pre><span class="go">wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -</span>
+<span class="go">sudo apt-get update</span>
+</pre></div>
+
+
+<p>Finally we install postgreSQL. </p>
+<div class="highlight"><pre><span class="go">apt-get install postgresql8.4</span>
+</pre></div>
+
+
+<p>Once it is up &amp; running, we need to make some changes to postgresql.conf and pg_hba.conf</p>
+<div class="highlight"><pre><span class="go">nano /etc/postgresql/8.4/main/postgresql.conf</span>
+</pre></div>
+
+
+<p>we uncomment "listen_addresses = '*'" and save the file. then we edit pg_hba.conf </p>
+<div class="highlight"><pre><span class="go">nano /etc/postgresql/8.4/main/pg_hba.conf</span>
+</pre></div>
+
+
+<p>and we make sure that it is set to trust (we are in a test enviroment)</p>
+<div class="highlight"><pre><span class="gp">#</span> <span class="s2">&quot;local&quot;</span> is <span class="k">for</span> Unix domain socket connections only 
+<span class="go">local all all trust </span>
+<span class="gp">#</span> IPv4 <span class="nb">local </span>connections: 
+<span class="go">host all all 127.0.0.1/32 trust </span>
+<span class="go">host all all 0/0 trust </span>
+<span class="gp">#</span> IPv6 <span class="nb">local </span>connections: 
+<span class="go">host all all ::1/128 trust</span>
+</pre></div>
+
+
+<p>We reboot the postgreSQL service</p>
+<div class="highlight"><pre><span class="go">service postgresql restart</span>
+</pre></div>
+
+
+<p>And it's done. </p>
+<h2>Sun JDK 6</h2>
+<p>Installing Sun JDK 6 is kind of messy, the package was removed from Debian Repositories a long time back, and getting installed from the .bin packages is sometimes not very easy. So we are going to do it with the Debian JavaPackage process. 
+First we need to add a "contrib" component to our source.list:</p>
+<div class="highlight"><pre><span class="go">deb http://http.debian.net/debian/ wheezy main contrib</span>
+</pre></div>
+
+
+<p>We make an update and we install the JavaPackage on our VM</p>
+<div class="highlight"><pre><span class="go">apt-get update &amp;&amp; apt-get install java-package &amp;&amp; exit</span>
+</pre></div>
+
+
+<p>Then we download the latest java6 package. I have <a href="http://nube.datacor.com.ar/public.php?service=files&amp;t=cabddbd4124637697102d09e244cf0ab">uploaded it</a> to my cloud because is a pain in the a** to register with Oracle, but you can always download it directly from there if you don't trust me (and you shouldn't..).</p>
+<p>After we downloaded the .bin file. we create the debian package.</p>
+<div class="highlight"><pre><span class="go">make-jpkg jdk-6u45-linux-x64.bin</span>
+</pre></div>
+
+
+<p>It may ask you to not be root in this process, if that is the case, just create a normal user and run the above command without superuser priveleges. </p>
+<p>Once the .deb package is created, we just install it as root as if it was a normal debian package. </p>
+<div class="highlight"><pre><span class="go">dpkg -i oracle-j2sdk1.7_1.7.0+update45_amd64.deb</span>
+</pre></div>
+
+
+<p>Check that everything went ok:</p>
+<div class="highlight"><pre><span class="go">javac -version</span>
+</pre></div>
+
+
+<p>You should get a message stating your javac version is 1.6.</p>
+<p>Finally we add some variables to /etc/profile so libertya can know where to find Java and itself. </p>
+<div class="highlight"><pre><span class="go">export JAVA_HOME=/usr/lib/jvm/j2sdk1.6-oracle/</span>
+<span class="go">export OXP_HOME=/ServidorOXP</span>
+</pre></div>
+
+
+<h2>ServidorOXP and DB dump</h2>
+<p>We need to download both from <a href="http://www.libertya.org/producto/descargas/libertya-1402">Libertya's website</a>.
+Once we have them, we just unzip them </p>
+<div class="highlight"><pre><span class="go">unzip dump_libertya_1402ar.sql.zip</span>
+<span class="go">unzip ServidorOXP_V14.02.zip</span>
+<span class="go">mv ServidorOXP /ServidorOXP</span>
+<span class="go">cd /ServidorOXP</span>
+<span class="go">chmod ­R +x *.sh</span>
+</pre></div>
+
+
+<p>Once this is done, we need to create Libertya's DB. for that we execute the following SQL as postgres user (<code>psql ­-U postgres</code>):</p>
+<div class="highlight"><pre><span class="k">CREATE</span> <span class="k">ROLE</span> <span class="n">libertya</span> <span class="n">LOGIN</span> <span class="k">ENCRYPTED</span> <span class="k">PASSWORD</span> <span class="s1">&#39;md52b2861c4d594f29f9ce9107c4560f3ae&#39;</span> <span class="n">SUPERUSER</span> <span class="n">CREATEDB</span> <span class="n">CREATEROLE</span> <span class="k">VALID</span> <span class="k">UNTIL</span> <span class="s1">&#39;infinity&#39;</span> <span class="k">IN</span> <span class="k">ROLE</span> <span class="n">postgres</span><span class="p">;</span> <span class="k">UPDATE</span> <span class="n">pg_authid</span> <span class="k">SET</span> <span class="n">rolcatupdate</span><span class="o">=</span><span class="k">true</span> <span class="k">WHERE</span> <span class="n">rolname</span><span class="o">=</span><span class="s1">&#39;libertya&#39;</span><span class="p">;</span>
+</pre></div>
+
+
+<p>then we create the language:</p>
+<div class="highlight"><pre><span class="go">createlang ­-U postgres ­-d template1 plpgsql</span>
+</pre></div>
+
+
+<p>and finally the DB</p>
+<div class="highlight"><pre><span class="k">CREATE</span> <span class="k">DATABASE</span> <span class="n">libertya</span> <span class="k">WITH</span> <span class="k">ENCODING</span><span class="o">=</span><span class="s1">&#39;UTF8&#39;</span> <span class="k">OWNER</span><span class="o">=</span><span class="n">libertya</span><span class="p">;</span>
+</pre></div>
+
+
+<p>once everything is done, we just use the dump to populate the DB. </p>
+<div class="highlight"><pre><span class="go">psql -U libertya -d libertya -f dump_libertya_1402ar.sql</span>
+</pre></div>
+
+
+<p>If all went OK. We follow to the Libertya's configuration. 
+As we are in a remote VM, we do not have an X11 enviroment, so we cannot use the Configurar.sh script in /ServidorOXP. We will need to manually edit LibertyaEnv.properties. For that we copy the template:</p>
+<div class="highlight"><pre><span class="go">cd /ServidorOXP</span>
+<span class="go">cp LibertyaEnvTemplate.properties LibertyaEnv.properties</span>
+<span class="go">nano LibertyaEnv.properties</span>
+</pre></div>
+
+
+<p>inside this file you will find Libertya's configuration settings. I will edit only the path related settings, as my main goal is to get it running for testing purposes. </p>
+<div class="highlight"><pre><span class="go">DEPLOY_APPS_OXP=/ServidorOXP/jboss/server/openXpertya/deploy</span>
+<span class="go">KEYSTORE_OXP=/ServidorOXP/keystore/myKeystore</span>
+<span class="go">JAVA_HOME=/usr/lib/jvm/j2sdk1.6-oracle</span>
+</pre></div>
+
+
+<p>Once the paths were corrected, we run ConfigurarAuto.sh</p>
+<div class="highlight"><pre><span class="go">./ConfigurarAuto.sh</span>
+</pre></div>
+
+
+<p>This will configure libertya's based on the file we have just edited. </p>
+<p>As a last step, we copy the init.d script from libertya so we can manage the service. </p>
+<div class="highlight"><pre><span class="go">cp /ServidorOXP/utils/unix/libertyad_ubuntu-debian.sh /etc/init.d/libertyad</span>
+<span class="go">chmod +x /etc/init.d/libertyad</span>
+<span class="go">update-rc.d libertyad defaults</span>
+<span class="go">service libertyad start</span>
+</pre></div>
+
+
+<p>And that's it! we should have a working libertya's on our Digital Ocean Debian VM. </p>
+<p><img alt="libertya" src="/images/libertya.png" /></p><p><a href="http://www.elpanda.com.ar/2015/installing-libertya-erp-on-a-digital-ocean-debian-vm.html#disqus_thread">comments</a></p>                </article>
+            </aside><!-- /#featured -->
+                <section id="content" class="body">
+                    <h1>Other articles</h1>
+                    <ol id="posts-list" class="hfeed">
+
+            <li><article class="hentry">
+                <header>
+                    <h1><a href="http://www.elpanda.com.ar/2015/starting-this-blog.html" rel="bookmark"
+                           title="Permalink to Starting this blog!">Starting this blog!</a></h1>
+                </header>
+
+                <div class="entry-content">
+<footer class="post-info">
+        <span>Fri 16 January 2015</span>
+<span>| tags: <a href="http://www.elpanda.com.ar/tag/linux.html">Linux</a><a href="http://www.elpanda.com.ar/tag/python.html">Python</a><a href="http://www.elpanda.com.ar/tag/web.html">Web</a><a href="http://www.elpanda.com.ar/tag/security.html">Security</a></span>
+</footer><!-- /.post-info -->                <p>It has been a long time since I started my first blog (nixlife.com.ar). For a number of reasons, I never had the time to properly follow it, and keep it updated. 
+But recently I changed jobs (Bye bye HP :P) and my spare time has increased dramatically jeje ...</p>
+                <a class="readmore" href="http://www.elpanda.com.ar/2015/starting-this-blog.html">read more</a>
+<p><a href="http://www.elpanda.com.ar/2015/starting-this-blog.html#disqus_thread">comments</a></p>                </div><!-- /.entry-content -->
+            </article></li>
+            </ol><!-- /#posts-list -->
+<p class="paginator">
+    Page 1 / 1
+</p>
+            </section><!-- /#content -->
+        <section id="extras" class="body">
+                <div class="blogroll">
+                        <h2>blogroll</h2>
+                        <ul>
+                            <li><a href="#">#</a></li>
+                        </ul>
+                </div><!-- /.blogroll -->
+                <div class="social">
+                        <h2>social</h2>
+                        <ul>
+
+                            <li><a href="http://www.twitter.com/caudio">twitter</a></li>
+                            <li><a href="http://ar.linkedin.com/in/claudiomarcial">linkedin</a></li>
+                            <li><a href="http://www.facebook.com/claudio.marcial">facebook</a></li>
+                        </ul>
+                </div><!-- /.social -->
+        </section><!-- /#extras -->
+
+        <footer id="contentinfo" class="body">
+                <p>Powered by <a href="http://getpelican.com/">Pelican</a>. Released under <a href="http://creativecommons.org/">Creative Commons</a></p>
+        </footer><!-- /#contentinfo -->
+
+<script type="text/javascript">
+    var disqus_shortname = 'pandaenlaselva';
+    (function () {
+        var s = document.createElement('script'); s.async = true;
+        s.type = 'text/javascript';
+        s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+        (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+    }());
+</script>
+</body>
+</html>

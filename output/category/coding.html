@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <meta charset="utf-8" />
+        <title>La Jungla de Bambú - Coding</title>
+        <link rel="stylesheet" href="http://www.elpanda.com.ar/theme/css/main.css" />
+
+        <!--[if IE]>
+            <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+</head>
+<!-- Piwik -->
+<script type="text/javascript">
+  var _paq = _paq || [];
+  _paq.push(["setDocumentTitle", document.domain + "/" + document.title]);
+  _paq.push(["setCookieDomain", "*.www.elpanda.com.ar"]);
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u="//stats.datacor.com.ar/";
+    _paq.push(['setTrackerUrl', u+'piwik.php']);
+    _paq.push(['setSiteId', 2]);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+  })();
+</script>
+<noscript><p><img src="//stats.datacor.com.ar/piwik.php?idsite=2" style="border:0;" alt="" /></p></noscript>
+<!-- End Piwik Code -->
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <img style="border: 0px solid ; width: 125px; height: 126px;" alt="" src="/theme/images/panda.png">&nbsp;&nbsp;<br><h1><a href="http://www.elpanda.com.ar/">La Jungla de Bambú </a></h1>
+                <nav><ul>
+    
+                        <li><a href="http://www.elpanda.com.ar/pages/about-me.html">About Me</a></li>
+                    <li class="active"><a href="http://www.elpanda.com.ar/category/coding.html">Coding</a></li>
+                    <li><a href="http://www.elpanda.com.ar/category/linux.html">Linux</a></li>
+                </ul>
+                </nav>
+        </header><!-- /#banner -->
+
+            <aside id="featured" class="body">
+                <article>
+                    <h1 class="entry-title"><a href="http://www.elpanda.com.ar/2015/starting-this-blog.html">Starting this blog!</a></h1>
+<footer class="post-info">
+        <span>Fri 16 January 2015</span>
+<span>| tags: <a href="http://www.elpanda.com.ar/tag/linux.html">Linux</a><a href="http://www.elpanda.com.ar/tag/python.html">Python</a><a href="http://www.elpanda.com.ar/tag/web.html">Web</a><a href="http://www.elpanda.com.ar/tag/security.html">Security</a></span>
+</footer><!-- /.post-info --><p>It has been a long time since I started my first blog (nixlife.com.ar). For a number of reasons, I never had the time to properly follow it, and keep it updated. 
+But recently I changed jobs (Bye bye HP :P) and my spare time has increased dramatically jeje. So I promised myself that I will try to documment here all my thoughts, failures and successes that I have on my daily IT Security job. </p>
+<p>So.. the first thing that I needed to decide is.. what platform should I use?
+Wordpress was the natural solution, but I didn't want to be constantly fighting against scanners, and script kiddies. So I made a decisition and went to an easier solution and I start digging in the world of static content generators. </p>
+<p><a href="http://www.octopress.org">Octopress</a></p>
+<p><img alt="octopress" src="/images/octopress.jpg" title="Octopress" /></p>
+<p>Without doubt very easy to install and use. A derivative from <a href="http://jekyllrb.com">Jekyll</a>, it was my first choice, and I even installed and started writing, but then I got to this post: <a href="http://octopress.org/2015/01/15/octopress-3.0-is-coming/">Octopress 3.0 Is Coming</a>, and I thought, why starting using something that is going to change so much in the next release? and also.. I wasn't so confortable with Ruby.. so I start searching again the net. </p>
+<p>And then.. I got my answer...</p>
+<p><a href="http://blog.getpelican.com/">Pelican</a></p>
+<p><img alt="pelican" src="/images/pelican.png" title="Pelican" /></p>
+<p>Pelican is a Static Site Generator written in Python, it is great. Very simple, and fast. 
+In order to install it, it is as simple as execute: </p>
+<div class="highlight"><pre><span class="go">sudo pip install pelican</span>
+</pre></div>
+
+
+<p>If you don't have pip and you are using Mac OS X, simply install it with <a href="http://brew.sh/">HomeBrew</a>. </p>
+<p>After you install pelican. Go to the directory where you want to save your new blog and execute: </p>
+<div class="highlight"><pre><span class="go">pelican-quickstart</span>
+</pre></div>
+
+
+<p>This will ask you some questions and create the necessary configuration packages and folders. </p>
+<p>Just go ahead and edit the pelicanconf.py on your favorite text editor and you are ready to write your first post. 
+On the directory tree you will see a content folder. Just create a file named firs-post.md and start blogging. </p>
+<p>Some useful links:</p>
+<ul>
+<li><a href="http://docs.getpelican.com/en/3.5.0/">Pelican Docummentation</a></li>
+<li><a href="http://daringfireball.net/projects/markdown/basics">Markdown Formatting Syntax basics</a></li>
+</ul><p><a href="http://www.elpanda.com.ar/2015/starting-this-blog.html#disqus_thread">comments</a></p>                </article>
+<p class="paginator">
+    Page 1 / 1
+</p>
+            </aside><!-- /#featured -->
+            </ol><!-- /#posts-list -->
+            </section><!-- /#content -->
+        <section id="extras" class="body">
+                <div class="blogroll">
+                        <h2>blogroll</h2>
+                        <ul>
+                            <li><a href="#">#</a></li>
+                        </ul>
+                </div><!-- /.blogroll -->
+                <div class="social">
+                        <h2>social</h2>
+                        <ul>
+
+                            <li><a href="http://www.twitter.com/caudio">twitter</a></li>
+                            <li><a href="http://ar.linkedin.com/in/claudiomarcial">linkedin</a></li>
+                            <li><a href="http://www.facebook.com/claudio.marcial">facebook</a></li>
+                        </ul>
+                </div><!-- /.social -->
+        </section><!-- /#extras -->
+
+        <footer id="contentinfo" class="body">
+                <p>Powered by <a href="http://getpelican.com/">Pelican</a>. Released under <a href="http://creativecommons.org/">Creative Commons</a></p>
+        </footer><!-- /#contentinfo -->
+
+<script type="text/javascript">
+    var disqus_shortname = 'pandaenlaselva';
+    (function () {
+        var s = document.createElement('script'); s.async = true;
+        s.type = 'text/javascript';
+        s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+        (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+    }());
+</script>
+</body>
+</html>
